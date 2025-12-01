@@ -1,0 +1,118 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation Request - Emers Kick Off 2026</title>
+    <style>
+        body { font-family: "Segoe UI", sans-serif; background: #f4f6f9; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 600px; border-top: 5px solid #d9534f; }
+        h2 { color: #d9534f; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
+        .note { background: #fff3cd; color: #856404; padding: 10px; font-size: 13px; border-radius: 4px; margin-bottom: 20px; }
+        
+        label { font-weight: bold; color: #555; display: block; margin-top: 15px; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #d9534f; outline: none; }
+        
+        button { background-color: #d9534f; color: white; padding: 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; width: 100%; margin-top: 30px; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
+        button:hover { background-color: #c9302c; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* Loading Spinner */
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; margin-right: 10px; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Success Message */
+        #success-message { display: none; text-align: center; margin-top: 20px; padding: 20px; background: #d4edda; color: #155724; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📝 Invitation Request Form</h2>
+        
+        <div id="success-message">
+            <h3>✅ Request Sent Successfully!</h3>
+            <p>Thank you for your submission. We will process your invitation letter and email it to you shortly.</p>
+        </div>
+
+        <form id="inviteForm" name="google-sheet">
+            <div class="note">
+                <strong>Process:</strong> Please fill in your details below. The Emers team will review your request and email you the official signed invitation letter (PDF).
+            </div>
+
+            <label>Your Email (To receive the PDF):</label>
+            <input type="email" name="Applicant_Email" placeholder="e.g. yourname@company.com" required>
+
+            <label>Gender:</label>
+            <select name="Gender">
+                <option value="Mr.">Mr.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Mrs.">Mrs.</option>
+            </select>
+
+            <label>Full Name (As in Passport):</label>
+            <input type="text" name="Full_Name" required>
+
+            <label>Position:</label>
+            <input type="text" name="Position" required>
+
+            <label>Company Name:</label>
+            <input type="text" name="Company" required>
+
+            <label>Company Address:</label>
+            <input type="text" name="Address" required>
+
+            <hr style="margin-top:20px; border:0; border-top:1px dashed #ccc;">
+            <div style="font-weight:bold; margin-top:10px; color:#d9534f;">Passport Details</div>
+
+            <label>Passport Number:</label>
+            <input type="text" name="Passport_Number" required>
+
+            <label>Issue Date:</label>
+            <input type="date" name="Issue_Date" required>
+
+            <label>Issue Place:</label>
+            <input type="text" name="Issue_Place" required>
+
+            <button type="submit" id="submitBtn">
+                <span class="spinner"></span> 🚀 Submit Application
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // ★★★ 請將下方的網址替換成您剛剛從 Google Apps Script 複製的網址 ★★★
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbybBKWAL9I5lYhz7v488TeZYpYXN2fMeOhvLp1yr9c-uV1vrMyIMNRF22Bsy75QEAYLXA/exec'; 
+        
+        const form = document.forms['google-sheet'];
+        const btn = document.getElementById('submitBtn');
+        const spinner = document.querySelector('.spinner');
+        const successMsg = document.getElementById('success-message');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            // 鎖定按鈕避免重複發送
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btn.innerHTML = '<span class="spinner" style="display:inline-block"></span> Sending...';
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    // 隱藏表單，顯示成功訊息
+                    form.style.display = 'none';
+                    successMsg.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    alert('Error! Please try again later.');
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                    btn.innerHTML = '🚀 Submit Application';
+                });
+        });
+    </script>
+
+</body>
+</html>
